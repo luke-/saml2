@@ -91,7 +91,7 @@ class AttributeQuery extends SubjectQuery
     /**
      * Retrieve all requested attributes.
      *
-     * @return array<string, string|array> All requested attributes, as an associative array.
+     * @return array<string, array> All requested attributes, as an associative array.
      */
     public function getAttributes(): array
     {
@@ -102,7 +102,7 @@ class AttributeQuery extends SubjectQuery
     /**
      * Set all requested attributes.
      *
-     * @param array<string, string|array> $attributes All requested attributes, as an associative array.
+     * @param array<string, array> $attributes All requested attributes, as an associative array.
      * @return void
      */
     public function setAttributes(array $attributes): void

@@ -22,7 +22,7 @@ abstract class Message extends SignedElement
     /**
      * Request extensions.
      *
-     * @var \SAML2\XML\samlp\Extensions[]
+     * @var \SAML2\XML\Chunk[]
      */
     protected $extensions = [];
 
@@ -589,7 +589,7 @@ abstract class Message extends SignedElement
     /**
      * Retrieve the Extensions.
      *
-     * @return \SAML2\XML\samlp\Extensions[]
+     * @return \SAML2\XML\Chunk[]
      */
     public function getExtensions(): array
     {
@@ -600,7 +600,7 @@ abstract class Message extends SignedElement
     /**
      * Set the Extensions.
      *
-     * @param \SAML2\XML\samlp\Extensions[] $extensions The Extensions
+     * @param \SAML2\XML\Chunk[] $extensions The Extensions
      * @return void
      */
     public function setExtensions(array $extensions): void
@@ -612,10 +612,10 @@ abstract class Message extends SignedElement
     /**
      * Add an Extension.
      *
-     * @param \SAML2\XML\samlp\Extensions $extensions The Extensions
+     * @param \SAML2\XML\Chunk $extensions The Extensions
      * @return void
      */
-    public function addExtension(Extensions $extension): void
+    public function addExtension(Chunk $extension): void
     {
         $this->extensions[] = $extension;
     }

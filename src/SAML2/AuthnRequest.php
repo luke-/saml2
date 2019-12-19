@@ -23,7 +23,7 @@ class AuthnRequest extends Request
     /**
      * The options for what type of name identifier should be returned.
      *
-     * @var array<string, string>
+     * @var array<string, string|bool>
      */
     private $nameIdPolicy = [];
 
@@ -348,7 +348,7 @@ class AuthnRequest extends Request
      * Retrieve the NameIdPolicy.
      *
      * @see \SAML2\AuthnRequest::setNameIdPolicy()
-     * @return array<string, string> The NameIdPolicy.
+     * @return array<string, string|bool> The NameIdPolicy.
      */
     public function getNameIdPolicy(): array
     {
@@ -364,7 +364,7 @@ class AuthnRequest extends Request
      *  - 'SPNameQualifier' (string)
      *  - 'AllowCreate' (bool)
      *
-     * @param array<string, string> $nameIdPolicy The NameIDPolicy.
+     * @param array<string, string|bool> $nameIdPolicy The NameIDPolicy.
      * @return void
      */
     public function setNameIdPolicy(array $nameIdPolicy): void
