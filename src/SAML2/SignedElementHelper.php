@@ -20,7 +20,7 @@ class SignedElementHelper extends SignedElement
     /**
      * Available methods for validating this message.
      *
-     * @var array
+     * @var array<string, string|array>
      */
     private $validators = [];
 
@@ -153,7 +153,7 @@ class SignedElementHelper extends SignedElement
      *
      * The certificates should be strings with the PEM encoded data.
      *
-     * @param array $certificates An array of certificates.
+     * @param string[] $certificates An array of certificates.
      * @return void
      */
     public function setCertificates(array $certificates): void
@@ -165,7 +165,7 @@ class SignedElementHelper extends SignedElement
     /**
      * Retrieve the certificates that are included in the message.
      *
-     * @return array An array of certificates.
+     * @return string[] An array of certificates.
      */
     public function getCertificates(): array
     {
@@ -176,7 +176,7 @@ class SignedElementHelper extends SignedElement
     /**
      * Retrieve certificates that sign this element.
      *
-     * @return array Array with certificates.
+     * @return string[] Array with certificates.
      */
     public function getValidatingCertificates(): array
     {

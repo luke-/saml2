@@ -22,7 +22,7 @@ abstract class Message extends SignedElement
     /**
      * Request extensions.
      *
-     * @var array
+     * @var \SAML2\XML\samlp\Extensions[]
      */
     protected $extensions = [];
 
@@ -104,14 +104,14 @@ abstract class Message extends SignedElement
     /**
      * List of certificates that should be included in the message.
      *
-     * @var array
+     * @var string[]
      */
     protected $certificates = [];
 
     /**
      * Available methods for validating this message.
      *
-     * @var array
+     * @var array<string, string|array>
      */
     private $validators = [];
 
@@ -528,7 +528,7 @@ abstract class Message extends SignedElement
      * Set the certificates that should be included in the message.
      * The certificates should be strings with the PEM encoded data.
      *
-     * @param array $certificates An array of certificates
+     * @param string[] $certificates An array of certificates
      * @return void
      */
     public function setCertificates(array $certificates): void
@@ -540,7 +540,7 @@ abstract class Message extends SignedElement
     /**
      * Retrieve the certificates that are included in the message.
      *
-     * @return array An array of certificates
+     * @return string[] An array of certificates
      */
     public function getCertificates(): array
     {
@@ -600,7 +600,7 @@ abstract class Message extends SignedElement
     /**
      * Set the Extensions.
      *
-     * @param array $extensions The Extensions
+     * @param \SAML2\XML\samlp\Extensions[] $extensions The Extensions
      * @return void
      */
     public function setExtensions(array $extensions): void

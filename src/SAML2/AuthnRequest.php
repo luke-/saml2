@@ -23,7 +23,7 @@ class AuthnRequest extends Request
     /**
      * The options for what type of name identifier should be returned.
      *
-     * @var array
+     * @var array<string, string|bool>
      */
     private $nameIdPolicy = [];
 
@@ -51,7 +51,7 @@ class AuthnRequest extends Request
     /**
      * The list of providerIDs in this request's scoping element
      *
-     * @var array
+     * @var string[]
      */
     private $IDPList = [];
 
@@ -65,7 +65,7 @@ class AuthnRequest extends Request
     /**
      * The RequesterID list in this request's scoping element
      *
-     * @var array
+     * @var string[]
      */
 
     private $RequesterID = [];
@@ -105,14 +105,14 @@ class AuthnRequest extends Request
      * - AuthnContextClassRef (required)
      * - Comparison (optinal)
      *
-     * @var array|null
+     * @var array<string, string>|null
      */
     private $requestedAuthnContext;
 
     /**
      * Audiences to send in the request.
      *
-     * @var array
+     * @var string[]
      */
     private $audiences = [];
 
@@ -348,7 +348,7 @@ class AuthnRequest extends Request
      * Retrieve the NameIdPolicy.
      *
      * @see \SAML2\AuthnRequest::setNameIdPolicy()
-     * @return array The NameIdPolicy.
+     * @return array<string, string|bool> The NameIdPolicy.
      */
     public function getNameIdPolicy(): array
     {
@@ -364,7 +364,7 @@ class AuthnRequest extends Request
      *  - 'SPNameQualifier' (string)
      *  - 'AllowCreate' (bool)
      *
-     * @param array $nameIdPolicy The NameIDPolicy.
+     * @param array<string, string|bool> $nameIdPolicy The NameIDPolicy.
      * @return void
      */
     public function setNameIdPolicy(array $nameIdPolicy): void
@@ -456,7 +456,7 @@ class AuthnRequest extends Request
      * Retrieve the audiences from the request.
      * This may be an empty string, in which case no audience is included.
      *
-     * @return array The audiences.
+     * @return string[] The audiences.
      */
     public function getAudiences(): array
     {
@@ -468,7 +468,7 @@ class AuthnRequest extends Request
      * Set the audiences to send in the request.
      * This may be an empty string, in which case no audience will be sent.
      *
-     * @param array $audiences The audiences.
+     * @param string[] $audiences The audiences.
      * @return void
      */
     public function setAudiences(array $audiences): void
@@ -490,7 +490,7 @@ class AuthnRequest extends Request
      * be a string instead of an array, where each string
      * is mapped to the value of attribute ProviderID.
      *
-     * @param array $IDPList List of idpEntries to scope the request to.
+     * @param string[] $IDPList List of idpEntries to scope the request to.
      * @return void
      */
     public function setIDPList(array $IDPList): void
@@ -503,7 +503,7 @@ class AuthnRequest extends Request
      * This function retrieves the list of providerIDs from this authentication request.
      * Currently we only support a list of ipd ientity id's.
      *
-     * @return array List of idp EntityIDs from the request
+     * @return stringp[] List of idp EntityIDs from the request
      */
     public function getIDPList(): array
     {
@@ -531,7 +531,7 @@ class AuthnRequest extends Request
 
 
     /**
-     * @param array $RequesterID
+     * @param string[] $RequesterID
      * @return void
      */
     public function setRequesterID(array $RequesterID): void
@@ -541,7 +541,7 @@ class AuthnRequest extends Request
 
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getRequesterID(): array
     {
@@ -644,7 +644,7 @@ class AuthnRequest extends Request
     /**
      * Retrieve the RequestedAuthnContext.
      *
-     * @return array|null The RequestedAuthnContext.
+     * @return array<string, string>|null The RequestedAuthnContext.
      */
     public function getRequestedAuthnContext(): ?array
     {
@@ -655,7 +655,7 @@ class AuthnRequest extends Request
     /**
      * Set the RequestedAuthnContext.
      *
-     * @param array|null $requestedAuthnContext The RequestedAuthnContext.
+     * @param array<string, string>|null $requestedAuthnContext The RequestedAuthnContext.
      * @return void
      */
     public function setRequestedAuthnContext(array $requestedAuthnContext = null): void
@@ -739,7 +739,7 @@ class AuthnRequest extends Request
      * Decrypt the NameId of the subject in the assertion.
      *
      * @param XMLSecurityKey $key       The decryption key.
-     * @param array          $blacklist Blacklisted decryption algorithms.
+     * @param string[]          $blacklist Blacklisted decryption algorithms.
      * @return void
      */
     public function decryptNameId(XMLSecurityKey $key, array $blacklist = []): void
@@ -771,7 +771,7 @@ class AuthnRequest extends Request
     /**
      * Set the SubjectConfirmation elements that should be included in the assertion.
      *
-     * @param array \SAML2\XML\saml\SubjectConfirmation[]
+     * @param \SAML2\XML\saml\SubjectConfirmation[] $subjectConfirmation
      * @return void
      */
     public function setSubjectConfirmation(array $subjectConfirmation): void

@@ -40,7 +40,7 @@ abstract class StatusResponse extends Message
     /**
      * The status code of the response.
      *
-     * @var array
+     * @var array<string, string|null>
      */
     private $status;
 
@@ -134,7 +134,7 @@ abstract class StatusResponse extends Message
     /**
      * Retrieve the status code.
      *
-     * @return array The status code.
+     * @return array<string, string|null> The status code.
      */
     public function getStatus(): array
     {
@@ -145,7 +145,7 @@ abstract class StatusResponse extends Message
     /**
      * Set the status code.
      *
-     * @param array $status The status code.
+     * @param array<string, string|null> $status The status code.
      * @return void
      *
      * @throws \InvalidArgumentException if assertions are false

@@ -167,7 +167,7 @@ class Utils
      *
      * An exception is thrown if we are unable to validate the signature.
      *
-     * @param array $info The information returned by the validateElement() function.
+     * @param array<string, string> $info The information returned by the validateElement() function.
      * @param XMLSecurityKey $key The publickey that should validate the Signature object.
      * @throws \Exception
      * @return void
@@ -322,7 +322,7 @@ class Utils
      * Insert a Signature node.
      *
      * @param XMLSecurityKey $key The key we should use to sign the message.
-     * @param array $certificates The certificates we should add to the signature node.
+     * @param string[] $certificates The certificates we should add to the signature node.
      * @param \DOMElement $root The XML node we should sign.
      * @param \DOMNode $insertBefore  The XML element we should insert the signature element before.
      * @return void
@@ -374,7 +374,7 @@ class Utils
      *
      * @param \DOMElement $encryptedData The encrypted data.
      * @param XMLSecurityKey $inputKey The decryption key.
-     * @param array &$blacklist Blacklisted decryption algorithms.
+     * @param string[] &$blacklist Blacklisted decryption algorithms.
      * @throws \Exception
      * @return \DOMElement The decrypted element.
      */
@@ -533,7 +533,7 @@ class Utils
      *
      * @param \DOMElement $encryptedData The encrypted data.
      * @param XMLSecurityKey $inputKey The decryption key.
-     * @param array $blacklist Blacklisted decryption algorithms.
+     * @param string[] $blacklist Blacklisted decryption algorithms.
      * @throws \Exception
      * @return \DOMElement The decrypted element.
      */
@@ -561,7 +561,7 @@ class Utils
      * @param \DOMElement $parent The element that contains the localized strings.
      * @param string $namespaceURI The namespace URI the localized strings should have.
      * @param string $localName The localName of the localized strings.
-     * @return array Localized strings.
+     * @return array<string, string> Localized strings.
      */
     public static function extractLocalizedStrings(\DOMElement $parent, string $namespaceURI, string $localName): array
     {
@@ -591,7 +591,7 @@ class Utils
      * @param \DOMElement $parent The element that contains the localized strings.
      * @param string $namespaceURI The namespace URI the string elements should have.
      * @param string $localName The localName of the string elements.
-     * @return array The string values of the various nodes.
+     * @return string[] The string values of the various nodes.
      */
     public static function extractStrings(DOMElement $parent, string $namespaceURI, string $localName): array
     {
@@ -639,7 +639,7 @@ class Utils
      * @param string $namespace The namespace of the created elements
      * @param string $name The name of the created elements
      * @param bool $localized Whether the strings are localized, and should include the xml:lang attribute.
-     * @param array $values The values we should create the elements from.
+     * @param array<int|string, string> $values The values we should create the elements from.
      * @return void
      */
     public static function addStrings(

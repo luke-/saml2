@@ -112,7 +112,7 @@ class EncryptedAssertion
      * Retrieve the assertion.
      *
      * @param  XMLSecurityKey  $inputKey  The key we should use to decrypt the assertion.
-     * @param  array           $blacklist Blacklisted decryption algorithms.
+     * @param  string[]        $blacklist Blacklisted decryption algorithms.
      * @return \SAML2\Assertion The decrypted assertion.
      */
     public function getAssertion(XMLSecurityKey $inputKey, array $blacklist = []): Assertion

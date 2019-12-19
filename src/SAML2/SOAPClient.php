@@ -176,7 +176,7 @@ class SOAPClient
      * @param resource $context The stream context.
      * @return void
      */
-    private static function addSSLValidator(Message $msg, $context): void
+    private static function addSSLValidator(Message $msg, resource $context): void
     {
         $options = stream_context_get_options($context);
         if (!isset($options['ssl']['peer_certificate'])) {

@@ -43,7 +43,7 @@ class LogoutRequest extends Request
     /**
      * The SessionIndexes of the sessions that should be terminated.
      *
-     * @var array
+     * @var array<string, string>
      */
     private $sessionIndexes = [];
 
@@ -170,7 +170,7 @@ class LogoutRequest extends Request
      * Decrypt the NameID in the LogoutRequest.
      *
      * @param XMLSecurityKey $key The decryption key.
-     * @param array $blacklist Blacklisted decryption algorithms.
+     * @param string[] $blacklist Blacklisted decryption algorithms.
      * @return void
      */
     public function decryptNameId(XMLSecurityKey $key, array $blacklist = []): void
@@ -218,7 +218,7 @@ class LogoutRequest extends Request
     /**
      * Retrieve the SessionIndexes of the sessions that should be terminated.
      *
-     * @return array The SessionIndexes, or an empty array if all sessions should be terminated.
+     * @return array<string, string> The SessionIndexes, or an empty array if all sessions should be terminated.
      */
     public function getSessionIndexes(): array
     {
@@ -229,7 +229,8 @@ class LogoutRequest extends Request
     /**
      * Set the SessionIndexes of the sessions that should be terminated.
      *
-     * @param array $sessionIndexes The SessionIndexes, or an empty array if all sessions should be terminated.
+     * @param array<string, string> $sessionIndexes The SessionIndexes,
+     *     or an empty array if all sessions should be terminated.
      * @return void
      */
     public function setSessionIndexes(array $sessionIndexes): void

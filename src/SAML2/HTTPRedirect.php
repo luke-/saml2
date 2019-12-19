@@ -164,7 +164,7 @@ class HTTPRedirect extends Binding
      * It also adds a new parameter, SignedQuery, which contains the data that is
      * signed.
      *
-     * @return array The query data that is signed.
+     * @return array<string, string> The query data that is signed.
      */
     private static function parseQuery(): array
     {
@@ -214,8 +214,8 @@ class HTTPRedirect extends Binding
      *
      * Throws an exception if we are unable to validate the signature.
      *
-     * @param array          $data The data we need to validate the query string.
-     * @param XMLSecurityKey $key  The key we should validate the query against.
+     * @param array<string, string> $data The data we need to validate the query string.
+     * @param XMLSecurityKey        $key  The key we should validate the query against.
      * @return void
      *
      * @throws \Exception

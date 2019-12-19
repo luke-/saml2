@@ -16,7 +16,7 @@ class Response extends StatusResponse
     /**
      * The assertions in this response.
      *
-     * @var (Assertion|EncryptedAssertion)[]
+     * @var (\SAML2\Assertion|\SAML2\EncryptedAssertion)[]
      */
     private $assertions = [];
 
@@ -53,7 +53,7 @@ class Response extends StatusResponse
     /**
      * Retrieve the assertions in this response.
      *
-     * @return \SAML2\Assertion[]|\SAML2\EncryptedAssertion[]
+     * @return (\SAML2\Assertion|\SAML2\EncryptedAssertion)[]
      */
     public function getAssertions(): array
     {
@@ -64,7 +64,7 @@ class Response extends StatusResponse
     /**
      * Set the assertions that should be included in this response.
      *
-     * @param \SAML2\Assertion[]|\SAML2\EncryptedAssertion[] $assertions The assertions.
+     * @param (\SAML2\Assertion|\SAML2\EncryptedAssertion)[] $assertions The assertions.
      * @return void
      */
     public function setAssertions(array $assertions): void

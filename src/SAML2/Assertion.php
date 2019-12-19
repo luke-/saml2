@@ -103,7 +103,7 @@ class Assertion extends SignedElement
      *
      * If no restrictions on the audience are present, this variable contains null.
      *
-     * @var array|null
+     * @var string[]|null
      */
     private $validAudiences;
 
@@ -159,7 +159,7 @@ class Assertion extends SignedElement
     /**
      * The list of AuthenticatingAuthorities for this assertion.
      *
-     * @var array
+     * @var string[]
      */
     private $AuthenticatingAuthority = [];
 
