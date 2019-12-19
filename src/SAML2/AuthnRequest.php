@@ -644,7 +644,7 @@ class AuthnRequest extends Request
     /**
      * Retrieve the RequestedAuthnContext.
      *
-     * @return array<string, string>|null The RequestedAuthnContext.
+     * @return array<string, string|array>|null The RequestedAuthnContext.
      */
     public function getRequestedAuthnContext(): ?array
     {
@@ -655,7 +655,7 @@ class AuthnRequest extends Request
     /**
      * Set the RequestedAuthnContext.
      *
-     * @param array<string, string>|null $requestedAuthnContext The RequestedAuthnContext.
+     * @param array<string, string|array>|null $requestedAuthnContext The RequestedAuthnContext.
      * @return void
      */
     public function setRequestedAuthnContext(array $requestedAuthnContext = null): void
