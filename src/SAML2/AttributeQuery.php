@@ -26,7 +26,7 @@ class AttributeQuery extends SubjectQuery
     /**
      * The attributes, as an associative array.
      *
-     * @var array<string, string|array>
+     * @var array<string, array>
      */
     private $attributes = [];
 
