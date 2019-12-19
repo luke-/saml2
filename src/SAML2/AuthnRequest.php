@@ -503,7 +503,7 @@ class AuthnRequest extends Request
      * This function retrieves the list of providerIDs from this authentication request.
      * Currently we only support a list of ipd ientity id's.
      *
-     * @return stringp[] List of idp EntityIDs from the request
+     * @return string[] List of idp EntityIDs from the request
      */
     public function getIDPList(): array
     {
