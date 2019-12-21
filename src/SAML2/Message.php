@@ -7,6 +7,7 @@ namespace SAML2;
 use DOMElement;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Utilities\Temporal;
+use SAML2\XML\Chunk;
 use SAML2\XML\saml\Issuer;
 use SAML2\XML\samlp\Extensions;
 use Webmozart\Assert\Assert;
