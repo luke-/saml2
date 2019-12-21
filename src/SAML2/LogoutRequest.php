@@ -43,7 +43,7 @@ class LogoutRequest extends Request
     /**
      * The SessionIndexes of the sessions that should be terminated.
      *
-     * @var array<string, string>
+     * @var array<int|string, string>
      */
     private $sessionIndexes = [];
 

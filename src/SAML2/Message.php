@@ -111,7 +111,7 @@ abstract class Message extends SignedElement
     /**
      * Available methods for validating this message.
      *
-     * @var array<string, string|array>
+     * @var array<int|string, string|array>
      */
     private $validators = [];
 
