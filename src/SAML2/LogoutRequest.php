@@ -218,7 +218,7 @@ class LogoutRequest extends Request
     /**
      * Retrieve the SessionIndexes of the sessions that should be terminated.
      *
-     * @return array<string, string> The SessionIndexes, or an empty array if all sessions should be terminated.
+     * @return array<int|string, string> The SessionIndexes, or an empty array if all sessions should be terminated.
      */
     public function getSessionIndexes(): array
     {
