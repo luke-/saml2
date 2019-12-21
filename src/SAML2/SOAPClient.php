@@ -173,7 +173,7 @@ class SOAPClient
      * Add a signature validator based on a SSL context.
      *
      * @param \SAML2\Message $msg The message we should add a validator to.
-     * @param $context The stream context.
+     * @param resource $context The stream context.
      * @return void
      */
     private static function addSSLValidator(Message $msg, $context): void

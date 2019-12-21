@@ -20,7 +20,7 @@ class SignedElementHelper extends SignedElement
     /**
      * Available methods for validating this message.
      *
-     * @var array<string|int, string|array>
+     * @var array
      */
     private $validators = [];
 

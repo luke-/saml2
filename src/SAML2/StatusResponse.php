@@ -171,6 +171,8 @@ abstract class StatusResponse extends Message
      */
     public function toUnsignedXML(): DOMElement
     {
+        Assert::notNull($this->status["Code"], 'Cannot convert StatusResponse to XML without a Code set');
+
         $root = parent::toUnsignedXML();
 
         if ($this->inResponseTo !== null) {
