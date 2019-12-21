@@ -639,7 +639,7 @@ class Utils
      * @param string $namespace The namespace of the created elements
      * @param string $name The name of the created elements
      * @param bool $localized Whether the strings are localized, and should include the xml:lang attribute.
-     * @param array<int|string, string> $values The values we should create the elements from.
+     * @param array[string]string $values The values we should create the elements from.
      * @return void
      */
     public static function addStrings(
