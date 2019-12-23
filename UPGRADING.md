@@ -1,5 +1,12 @@
 # UPGRADE NOTES
 
+## 4.x to 5.0
+
+**StatusResponse BC breaking change**
+
+The API of the StatusResponse-class has been slightly changed; getStatus/setStatus will now handle Status-objects
+instead of the previous array
+
 ## 4.0 to 4.1
 
 **Assertion processor BC breaking change**
