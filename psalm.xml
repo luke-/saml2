@@ -7,6 +7,10 @@
 >
   <projectFiles>
     <directory name="src/SAML2" />
+    <file name="tests/SAML2/XML/samlp/StatusTest.php" />
+    <file name="tests/SAML2/XML/samlp/StatusCodeTest.php" />
+    <file name="tests/SAML2/XML/samlp/StatusMessageTest.php" />
+    <file name="tests/SAML2/XML/samlp/StatusDetailTest.php" />
     <ignoreFiles>
       <directory name="vendor" />
     </ignoreFiles>
