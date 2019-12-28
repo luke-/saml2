@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SAML2;
 
 use DOMElement;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -60,6 +61,21 @@ class ArtifactResolve extends Request
     public function setArtifact(string $artifact): void
     {
         $this->artifact = $artifact;
+    }
+
+
+    /**
+     * Convert XML into a ArtifactResolve
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $results = Utils::xpQuery($xml, './saml_protocol:Artifact');
+        $artifact = $results[0]->textContent;
+
+        return new self($artifact);
     }
 
 

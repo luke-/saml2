@@ -7,6 +7,7 @@ namespace SAML2\XML\md;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class AttributeConsumingService
+class AttributeConsumingService extends AbstractConvertable
 {
     /**
      * The index of this AttributeConsumingService.
@@ -219,6 +220,43 @@ class AttributeConsumingService
     public function addRequestedAttribute(RequestedAttribute $requestedAttribute): void
     {
         $this->RequestedAttribute[] = $requestedAttribute;
+    }
+
+
+    /**
+     * Convert XML into a AttributeConsumingService
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('index')) {
+            throw new \Exception('Missing index on AttributeConsumingService.');
+        }
+        $Index = intval($xml->getAttribute('index'));
+
+        $IsDefault = Utils::parseBoolean($xml, 'isDefault', null);
+
+        $ServiceNames  = Utils::extractLocalizedStrings($xml, Constants::NS_MD, 'ServiceName');
+        Assert::notEmpty($ServiceNames, 'Missing ServiceNameRequestedAttribute in AttributeConsumingService.');
+
+        $ServiceDescriptions = Utils::extractLocalizedStrings($xml, Constants::NS_MD, 'ServiceDescription');
+
+        $RequestedAttributes = [];
+        /** @var \DOMElement $ra */
+        foreach (Utils::xpQuery($xml, './saml_metadata:RequestedAttribute') as $ra) {
+            $RequestedAttributes[] = new RequestedAttribute($ra);
+        }
+        Assert::notEmpty($RequestedAttributes, 'Missing RequestedAttribute in AttributeConsumingService.');
+
+        return new self(
+            $Index,
+            $IsDefault,
+            $ServiceNames,
+            empty($ServiceDescriptions) ? $ServiceDescriptions : null,
+            $RequestedAttributes
+        );
     }
 
 

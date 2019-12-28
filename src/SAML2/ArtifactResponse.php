@@ -6,6 +6,7 @@ namespace SAML2;
 
 use DOMElement;
 use DOMNode;
+use SAML2\XML\AbstractConvertable;
 
 /**
  * The \SAML2\ArtifactResponse, is the response to the \SAML2\ArtifactResolve.
@@ -66,6 +67,29 @@ class ArtifactResponse extends StatusResponse
     public function getAny(): ?DOMElement
     {
         return $this->any;
+    }
+
+
+    /**
+     * Convert XML into a ArtifactResponse
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $status = Utils::xpQuery($xml, './saml_protocol:Status');
+        $status = $status[0];
+
+        /** @psalm-suppress RedundantCondition */
+        for ($any = $status->nextSibling; $any instanceof DOMNode; $any = $any->nextSibling) {
+            if ($any instanceof DOMElement) {
+                break;
+            }
+            /* Ignore comments and text nodes. */
+        }
+
+        return new self($any);
     }
 
 

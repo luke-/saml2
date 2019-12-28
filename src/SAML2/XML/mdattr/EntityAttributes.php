@@ -16,7 +16,7 @@ use Webmozart\Assert\Assert;
  * @link: http://docs.oasis-open.org/security/saml/Post2.0/sstc-metadata-attr-cs-01.pdf
  * @package SimpleSAMLphp
  */
-class EntityAttributes
+class EntityAttributes extends \SAML2\XML\AbstractConvertable
 {
     /**
      * The namespace used for the EntityAttributes extension.
@@ -90,6 +90,29 @@ class EntityAttributes
     {
         Assert::isInstanceOfAny($child, [Chunk::class, Attribute::class]);
         $this->children[] = $child;
+    }
+
+
+    /**
+     * Convert XML into a EntityAttributes
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $children = [];
+
+        /** @var \DOMElement $node */
+        foreach (Utils::xpQuery($xml, './saml_assertion:Attribute|./saml_assertion:Assertion') as $node) {
+            if ($node->localName === 'Attribute') {
+                $children[] = new Attribute($node);
+            } else {
+                $children[] = new Chunk($node);
+            }
+        }
+
+        return new self($children);
     }
 
 

@@ -450,6 +450,102 @@ class EntityDescriptor extends SignedElementHelper
 
 
     /**
+     * Convert XML into a EntityDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('entityID')) {
+            throw new \Exception('Missing required attribute entityID on EntityDescriptor.');
+        }
+        $entityID = $xml->getAttribute('entityID');
+
+        $ID = $xml->hasAttribute('ID') ? $xml->getAttribute('ID') : null;
+        $validUntil = $xml->hasAttribute('validUntil')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('validUntil'))
+            : null;
+        $cacheDuration = $xml->hasAttribute('cacheDuration') ? $xml->getAttribute('cacheDuration') : null;
+        $Extensions = Extensions::getList($xml);
+
+        $RoleDescriptor = $ContactPerson = $AdditionalMetadataLocation = [];
+        $AffiliationDescriptor = $Organization = null;
+        foreach ($xml->childNodes as $node) {
+            if (!($node instanceof DOMElement)) {
+                continue;
+            }
+
+            if ($node->namespaceURI !== Constants::NS_MD) {
+                continue;
+            }
+
+            switch ($node->localName) {
+                case 'RoleDescriptor':
+                    $RoleDescriptor[] = new UnknownRoleDescriptor($node);
+                    break;
+                case 'IDPSSODescriptor':
+                    $RoleDescriptor[] = new IDPSSODescriptor($node);
+                    break;
+                case 'SPSSODescriptor':
+                    $RoleDescriptor[] = new SPSSODescriptor($node);
+                    break;
+                case 'AuthnAuthorityDescriptor':
+                    $RoleDescriptor[] = new AuthnAuthorityDescriptor($node);
+                    break;
+                case 'AttributeAuthorityDescriptor':
+                    $RoleDescriptor[] = new AttributeAuthorityDescriptor($node);
+                    break;
+                case 'PDPDescriptor':
+                    $RoleDescriptor[] = new PDPDescriptor($node);
+                    break;
+                case 'AffiliationDescriptor':
+                    if ($AffiliationDescriptor !== null) {
+                        throw new \Exception('More than one AffiliationDescriptor in the entity.');
+                    }
+                    $AffiliationDescriptor = new AffiliationDescriptor($node);
+                    break;
+                case 'Organization':
+                    if ($Organization !== null) {
+                        throw new \Exception('More than one Organization in the entity.');
+                    }
+                    $Organization = new Organization($node);
+                    break;
+                case 'ContactPerson':
+                    $ContactPerson[] = new ContactPerson($node);
+                    break;
+                case 'AdditionalMetadataLocation':
+                    $AdditionalMetadataLocation[] = new AdditionalMetadataLocation($node);
+                    break;
+            }
+        }
+
+        if (empty($RoleDescriptor) && is_null($AffiliationDescriptor)) {
+            throw new \Exception(
+                'Must have either one of the RoleDescriptors or an AffiliationDescriptor in EntityDescriptor.'
+            );
+        } elseif (!empty($RoleDescriptor) && !is_null($AffiliationDescriptor)) {
+            throw new \Exception(
+                'AffiliationDescriptor cannot be combined with other RoleDescriptor elements in EntityDescriptor.'
+            );
+        }
+
+        return new self(
+            $entityID,
+            $ID,
+            $validUntil,
+            $cacheDuration,
+            $Extensions,
+            $RoleDescriptor,
+            $ContactPerson,
+            $AdditionalMetadataLocation,
+            $AffiliationDescriptor,
+            $Organization
+        );
+    }
+
+
+    /**
      * Create this EntityDescriptor.
      *
      * @param \DOMElement|null $parent The EntitiesDescriptor we should append this EntityDescriptor to.

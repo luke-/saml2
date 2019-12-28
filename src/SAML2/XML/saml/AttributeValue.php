@@ -8,6 +8,7 @@ use DOMElement;
 use SAML2\Constants;
 use SAML2\DOMDocumentFactory;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -15,7 +16,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class AttributeValue implements \Serializable
+class AttributeValue extends AbstractConvertable implements \Serializable
 {
     /**
      * The raw \DOMElement representing this value.
@@ -82,6 +83,20 @@ class AttributeValue implements \Serializable
     public function setElement(DOMElement $element): void
     {
         $this->element = $element;
+    }
+
+
+    /**
+     * Convert XML into a AttributeValue
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $doc = DOMDocumentFactory::create();
+        $element = $doc->createElementNS(Constants::NS_SAML, 'saml:AttributeValue');
+        return new self($element);
     }
 
 

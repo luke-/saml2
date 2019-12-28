@@ -7,6 +7,7 @@ namespace SAML2\XML\md;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use SAML2\XML\Chunk;
 use SAML2\XML\ds\KeyInfo;
 use Webmozart\Assert\Assert;
@@ -16,7 +17,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class KeyDescriptor
+class KeyDescriptor extends AbstractConvertable
 {
     /**
      * What this key can be used for.
@@ -158,6 +159,36 @@ class KeyDescriptor
     public function addEncryptionMethod(Chunk $encryptionMethod): void
     {
         $this->EncryptionMethod[] = $encryptionMethod;
+    }
+
+
+    /**
+     * Convert XML into a KeyDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $use = $xml->hasAttribute('use') ? $xml->getAttribute('use') : null;
+
+        $keyInfo = Utils::xpQuery($xml, './ds:KeyInfo');
+        if (count($keyInfo) > 1) {
+            throw new \Exception('More than one ds:KeyInfo in the KeyDescriptor.');
+        } elseif (empty($keyInfo)) {
+            throw new \Exception('No ds:KeyInfo in the KeyDescriptor.');
+        }
+
+        /** @var \DOMElement $keyInfo[0] */
+        $KeyInfo = new KeyInfo($keyInfo[0]);
+
+        $EncryptionMethod = [];
+        /** @var \DOMElement $em */
+        foreach (Utils::xpQuery($xml, './saml_metadata:EncryptionMethod') as $em) {
+            $EncryptionMethod[] = new Chunk($em);
+        }
+
+        return new self($use, $keyInfo, $EncryptionMethod);
     }
 
 

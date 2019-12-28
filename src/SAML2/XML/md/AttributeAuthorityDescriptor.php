@@ -253,6 +253,49 @@ class AttributeAuthorityDescriptor extends RoleDescriptor
 
 
     /**
+     * Convert XML into a AttributeAuthorityDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $AttributeService = $AssertionIDRequestService = $Attributes = [];
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AttributeService') as $ep) {
+            $AttributeService[] = new EndpointType($ep);
+        }
+
+        if (empty($AttributeService)) {
+            throw new \Exception('Must have at least one AttributeService in AttributeAuthorityDescriptor.');
+        }
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AssertionIDRequestService') as $ep) {
+            $AssertionIDRequestService = new EndpointType($ep);
+        }
+
+        $NameIDFormat = Utils::extractStrings($xml, Constants::NS_MD, 'NameIDFormat');
+
+        $AttributeProfile = Utils::extractStrings($xml, Constants::NS_MD, 'AttributeProfile');
+
+        /** @var \DOMElement $a */
+        foreach (Utils::xpQuery($xml, './saml_assertion:Attribute') as $a) {
+            $Attributes = new Attribute($a);
+        }
+
+        return new self(
+            $AttributeService,
+            $AssertionIDRequestService,
+            $NameIDFormat,
+            $AttributeProfile,
+            $Attributes
+        );
+    }
+
+
+    /**
      * Add this AttributeAuthorityDescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this IDPSSODescriptor to.

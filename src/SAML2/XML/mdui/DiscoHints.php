@@ -14,7 +14,7 @@ use SAML2\XML\Chunk;
  * @link: http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-ui/v1.0/sstc-saml-metadata-ui-v1.0.pdf
  * @package SimpleSAMLphp
  */
-class DiscoHints
+class DiscoHints extends \SAML2\XML\AbstractConvertable
 {
     /**
      * Array with child elements.
@@ -170,6 +170,28 @@ class DiscoHints
     public function addChildren(Chunk $child): void
     {
         $this->children[] = $child;
+    }
+
+
+    /**
+     * Convert XML into a DiscoHints
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $IPHint = Utils::extractStrings($xml, Common::NS, 'IPHint');
+        $DomainHint = Utils::extractStrings($xml, Common::NS, 'DomainHint');
+        $GeolocationHint = Utils::extractStrings($xml, Common::NS, 'GeolocationHint');
+        $children = [];
+
+        /** @var \DOMElement $node */
+        foreach (Utils::xpQuery($xml, "./*[namespace-uri()!='" . Common::NS . "']") as $node) {
+            $children[] = new Chunk($node);
+        }
+
+        return new self($IPHint, $DomainHint, $GeolocationHint, $children ?: null);
     }
 
 

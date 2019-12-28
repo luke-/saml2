@@ -104,6 +104,25 @@ class IndexedEndpointType extends EndpointType
 
 
     /**
+     * Convert XML into a IndexedEndpointType
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('index')) {
+            throw new \Exception('Missing index on ' . $xml->tagName);
+        }
+        $index = intval($xml->getAttribute('index'));
+
+        $isDefault = Utils::parseBoolean($xml, 'isDefault', null);
+
+        return new self($index, $isDefault);
+    }
+
+
+    /**
      * Add this endpoint to an XML element.
      *
      * @param \DOMElement $parent The element we should append this endpoint to.

@@ -14,7 +14,7 @@ use Webmozart\Assert\Assert;
  * @link: http://docs.oasis-open.org/security/saml/Post2.0/saml-metadata-rpi/v1.0/saml-metadata-rpi-v1.0.pdf
  * @package SimpleSAMLphp
  */
-class PublicationInfo
+class PublicationInfo extends \SAML2\XML\AbstractConvertable
 {
     /**
      * The identifier of the metadata publisher.
@@ -169,6 +169,31 @@ class PublicationInfo
     public function setUsagePolicy(array $usagePolicy): void
     {
         $this->UsagePolicy = $usagePolicy;
+    }
+
+
+    /**
+     * Convert XML into a PublicationInfo
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('publisher')) {
+            throw new \Exception('Missing required attribute "publisher" in mdrpi:PublicationInfo element.');
+        }
+        $publisher = $xml->getAttribute('publisher');
+
+        $creationInstant = $xml->hasAttribute('creationInstant')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('creationInstant'))
+            : null;
+
+        $publicationId = $xml->hasAttribute('publicationId') ? $xml->getAttribute('publicationId') : null;
+
+        $UsagePolicy = Utils::extractLocalizedStrings($xml, Common::NS_MDRPI, 'UsagePolicy');
+
+        return new self($publisher, $creationInstant, $publicationId, $UsagePolicy);
     }
 
 

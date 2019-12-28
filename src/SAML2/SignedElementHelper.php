@@ -15,7 +15,7 @@ use RobRichards\XMLSecLibs\XMLSecurityKey;
  *
  * @package SimpleSAMLphp
  */
-class SignedElementHelper extends SignedElement
+abstract class SignedElementHelper extends SignedElement
 {
     /**
      * Available methods for validating this message.

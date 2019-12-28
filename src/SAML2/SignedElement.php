@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace SAML2;
 
 use RobRichards\XMLSecLibs\XMLSecurityKey;
+use SAML2\XML\AbstractConvertable;
 
 /**
  * Abstract class to a SAML 2 element which may be signed.
  *
  * @package SimpleSAMLphp
  */
-abstract class SignedElement
+abstract class SignedElement extends AbstractConvertable
 {
     /**
      * The private key we should use to sign the message.

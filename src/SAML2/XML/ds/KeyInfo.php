@@ -6,6 +6,7 @@ namespace SAML2\XML\ds;
 
 use DOMElement;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
+use SAML2\XML\AbstractConvertable;
 use SAML2\XML\Chunk;
 use Webmozart\Assert\Assert;
 
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class KeyInfo
+class KeyInfo extends AbstractConvertable
 {
     /**
      * The Id attribute on this element.
@@ -135,6 +136,43 @@ class KeyInfo
             'KeyInfo can only contain instances of KeyName, X509Data or Chunk.'
         );
         $this->info[] = $info;
+    }
+
+
+    /**
+     * Convert XML into a KeyInfo
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $Id = $xml->hasAttribute('Id') ? $xml->getAttribute('Id') : null;
+
+        $info = [];
+        foreach ($xml->childNodes as $n) {
+            if (!($n instanceof \DOMElement)) {
+                continue;
+            }
+
+            if ($n->namespaceURI !== XMLSecurityDSig::XMLDSIGNS) {
+                $info[] = new Chunk($n);
+                continue;
+            }
+            switch ($n->localName) {
+                case 'KeyName':
+                    $info[] = new KeyName($n);
+                    break;
+                case 'X509Data':
+                    $info[] = new X509Data($n);
+                    break;
+                default:
+                    $info[] = new Chunk($n);
+                    break;
+            }
+        }
+
+        return new self($info, $Id);
     }
 
 

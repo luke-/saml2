@@ -14,7 +14,7 @@ use Webmozart\Assert\Assert;
  * @link: http://docs.oasis-open.org/security/saml/Post2.0/saml-metadata-rpi/v1.0/saml-metadata-rpi-v1.0.pdf
  * @package SimpleSAMLphp
  */
-class RegistrationInfo
+class RegistrationInfo extends \SAML2\XML\AbstractConvertable
 {
     /**
      * The identifier of the metadata registration authority.
@@ -137,6 +137,31 @@ class RegistrationInfo
     public function setRegistrationPolicy(array $registrationPolicy): void
     {
         $this->RegistrationPolicy = $registrationPolicy;
+    }
+
+
+    /**
+     * Convert XML into a RegistrationInfo
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('registrationAuthority')) {
+            throw new \Exception(
+                'Missing required attribute "registrationAuthority" in mdrpi:RegistrationInfo element.'
+            );
+        }
+        $registrationAuthority = $xml->getAttribute('registrationAuthority');
+
+        $registrationInstant = $xml->hasAttribute('registrationInstant')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('registrationInstant'))
+            : null;
+
+        $RegistrationPolicy = Utils::extractLocalizedStrings($xml, Common::NS_MDRPI, 'RegistrationPolicy');
+
+        return new self($registrationAuthority, $registrationInstant, $RegistrationPolicy);
     }
 
 

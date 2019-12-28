@@ -251,6 +251,41 @@ class EntitiesDescriptor extends SignedElementHelper
 
 
     /**
+     * Convert XML into a EntitiesDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $ID =  $xml->hasAttribute('ID') ?$xml->getAttribute('ID') : null;
+        $validUntil = $xml->hasAttribute('validUntil') ? Utils::xsDateTimeToTimestamp($xml->getAttribute('validUntil')) : null;
+        $cacheDuration = $xml->hasAttribute('cacheDuration') ? $xml->getAttribute('cacheDuration') : null;
+        $Name = $xml->hasAttribute('Name') ? $xml->getAttribute('Name') : null;
+        $Extensions = Extensions::getList($xml);
+        $children = [];
+
+        /** @var \DOMElement $node */
+        foreach (Utils::xpQuery($xml, './saml_metadata:EntityDescriptor|./saml_metadata:EntitiesDescriptor') as $node) {
+            if ($node->localName === 'EntityDescriptor') {
+                $children[] = new EntityDescriptor($node);
+            } else {
+                $children[] = new EntitiesDescriptor($node);
+            }
+        }
+
+        return new self(
+            $ID,
+            $validUntil,
+            $cacheDuration,
+            $Name,
+            $Extensions,
+            $children
+        );
+    }
+
+
+    /**
      * Convert this EntitiesDescriptor to XML.
      *
      * @param \DOMElement|null $parent The EntitiesDescriptor we should append this EntitiesDescriptor to.

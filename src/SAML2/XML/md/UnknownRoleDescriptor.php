@@ -36,6 +36,18 @@ class UnknownRoleDescriptor extends RoleDescriptor
 
 
     /**
+     * Convert XML into a UnknownRoleDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        return new self($xml);
+    }
+
+
+    /**
      * Add this RoleDescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this RoleDescriptor to.

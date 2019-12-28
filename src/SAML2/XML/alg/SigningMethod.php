@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SAML2\XML\alg;
 
 use DOMElement;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  * @author Jaime Pérez Crespo, UNINETT AS <jaime.perez@uninett.no>
  * @package simplesamlphp/saml2
  */
-class SigningMethod
+class SigningMethod extends AbstractConvertable
 {
     /**
      * An URI identifying the algorithm supported for XML signature operations.
@@ -138,6 +139,26 @@ class SigningMethod
     public function setMaxKeySize(int $maxKeySize = null): void
     {
         $this->MaxKeySize = $maxKeySize;
+    }
+
+
+    /**
+     * Convert XML into a SigningMethod
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('Algorithm')) {
+            throw new \Exception('Missing required attribute "Algorithm" in alg:SigningMethod element.');
+        }
+
+        $Algorithm = $xml->getAttribute('Algorithm');
+        $MinKeySize = $xml->hasAttribute('MinKeySize') ? intval($xml->getAttribute('MinKeySize')) : null;
+        $MaxKeySize = $xml->hasAttribute('MaxKeySize') ? intval($xml->getAttribute('MaxKeySize')) : null;
+
+        return new self($Algorithm, $MinKeySize, $MaxKeySize);
     }
 
 

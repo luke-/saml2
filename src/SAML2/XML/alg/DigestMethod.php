@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SAML2\XML\alg;
 
 use DOMElement;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  * @author Jaime Pérez Crespo, UNINETT AS <jaime.perez@uninett.no>
  * @package simplesamlphp/saml2
  */
-class DigestMethod
+class DigestMethod extends AbstractConvertable
 {
     /**
      * An URI identifying an algorithm supported for digest operations.
@@ -68,6 +69,24 @@ class DigestMethod
     public function setAlgorithm(string $algorithm): void
     {
         $this->Algorithm = $algorithm;
+    }
+
+
+    /**
+     * Convert XML into a DigestMethod
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('Algorithm')) {
+            throw new \Exception('Missing required attribute "Algorithm" in alg:DigestMethod element.');
+        }
+
+        return new self(
+            $xml->getAttribute('Algorithm'),
+        );
     }
 
 

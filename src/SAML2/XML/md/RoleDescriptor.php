@@ -393,6 +393,64 @@ class RoleDescriptor extends SignedElementHelper
 
 
     /**
+     * Convert XML into a RoleDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $ID = $xml->hasAttribute('ID') ? $xml->getAttribute('ID') : null;
+        $validUntil = $xml->hasAttribute('validUntil')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('validUntil'))
+            : null;
+        $cacheDuration = $xml->hasAttribute('cacheDuration') ? $xml->getAttribute('cacheDuration') : null;
+
+        if (!$xml->hasAttribute('protocolSupportEnumeration')) {
+            throw new \Exception('Missing protocolSupportEnumeration attribute on ' . $xml->localName);
+        }
+        $protocolSupportEnumeration = preg_split('/[\s]+/', $xml->getAttribute('protocolSupportEnumeration'));
+
+        $errorURL = $xml->hasAttribute('errorURL') ? $xml->getAttribute('errorURL') : null;
+
+        $Extensions = Extensions::getList($xml);
+
+        $KeyDescriptor = $ContactPerson = [];
+        foreach (Utils::xpQuery($xml, './saml_metadata:KeyDescriptor') as $kd) {
+            /** @var \DOMElement $kd */
+            $KeyDescriptor[] = new KeyDescriptor($kd);
+        }
+
+        $organization = Utils::xpQuery($xml, './saml_metadata:Organization');
+        if (count($organization) > 1) {
+            throw new \Exception('More than one Organization in the entity.');
+        } elseif (!empty($organization)) {
+            /** @var \DOMElement $organization[0] */
+            $Organization = new Organization($organization[0]);
+        } else {
+            $Organization = null;
+        }
+
+        foreach (Utils::xpQuery($xml, './saml_metadata:ContactPerson') as $cp) {
+            /** @var \DOMElement $cp */
+            $ContactPerson = new ContactPerson($cp);
+        }
+
+        return new self(
+            $ID,
+            $validUntil,
+            $cacheDuration,
+            $protocolSupportEnumeration,
+            $errorURL,
+            $Extensions,
+            $KeyDescriptor,
+            $Organization,
+            $ContactPerson
+        );
+    }
+
+
+    /**
      * Add this RoleDescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this endpoint to.

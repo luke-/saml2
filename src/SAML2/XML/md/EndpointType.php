@@ -6,6 +6,7 @@ namespace SAML2\XML\md;
 
 use DOMElement;
 use SAML2\Constants;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -13,7 +14,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class EndpointType
+class EndpointType extends AbstractConvertable
 {
     /**
      * The binding for this endpoint.
@@ -231,6 +232,44 @@ class EndpointType
     public function setResponseLocation(string $responseLocation = null): void
     {
         $this->ResponseLocation = $responseLocation;
+    }
+
+
+    /**
+     * Convert XML into a EndpointType
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('Binding')) {
+            throw new \Exception('Missing Binding on ' . $xml->tagName);
+        }
+        $Binding = $xml->getAttribute('Binding');
+
+        if (!$xml->hasAttribute('Location')) {
+            throw new \Exception('Missing Location on ' . $xml->tagName);
+        }
+        $Location = $xml->getAttribute('Location');
+
+        $ResponseLocation = $xml->hasAttribute('ResponseLocation') ? $xml->getAttribute('ResponseLocation') : null;
+
+        $attributes = [];
+        foreach ($xml->attributes as $a) {
+            if ($a->namespaceURI === null) {
+                // Not namespace-qualified -- skip.
+                continue;
+            }
+            $fullName = '{' . $a->namespaceURI . '}' . $a->localName;
+            $attributes[$fullName] = [
+                'qualifiedName' => $a->nodeName,
+                'namespaceURI' => $a->namespaceURI,
+                'value' => $a->value,
+            ];
+        }
+
+        return new self($Binding, $Location, $ResponseLocation, $attributes);
     }
 
 

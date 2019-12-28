@@ -13,7 +13,7 @@ use Webmozart\Assert\Assert;
  * @link: http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-ui/v1.0/sstc-saml-metadata-ui-v1.0.pdf
  * @package SimpleSAMLphp
  */
-class Logo
+class Logo extends \SAML2\XML\AbstractConvertable
 {
     /**
      * The url of this logo.
@@ -178,6 +178,32 @@ class Logo
     public function setWidth(int $width): void
     {
         $this->width = $width;
+    }
+
+
+    /**
+     * Convert XML into a Logo
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('width')) {
+            throw new \Exception('Missing width of Logo.');
+        }
+        if (!$xml->hasAttribute('height')) {
+            throw new \Exception('Missing height of Logo.');
+        }
+        if (!strlen($xml->textContent)) {
+            throw new \Exception('Missing url value for Logo.');
+        }
+        $Url = $xml->textContent;
+        $Width = intval($xml->getAttribute('width'));
+        $Height = intval($xml->getAttribute('height'));
+        $lang = $xml->hasAttribute('xml:lang') ? $xml->getAttribute('xml:lang') : null;
+
+        return new self($Url, $Width, $Height, $lang);
     }
 
 

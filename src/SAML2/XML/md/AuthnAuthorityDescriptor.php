@@ -169,6 +169,33 @@ class AuthnAuthorityDescriptor extends RoleDescriptor
 
 
     /**
+     * Convert XML into a AuthnAuthorityDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $AuthnQueryService = $AssertionIDRequestService = [];
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AuthnQueryService') as $ep) {
+            $AuthnQueryService = new EndpointType($ep);
+        }
+        Assert::notEmpty($AuthnQueryService, 'Must have at least one AuthnQueryService in AuthnAuthorityDescriptor.');
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AssertionIDRequestService') as $ep) {
+            $AssertionIDRequestService = new EndpointType($ep);
+        }
+
+        $NameIDFormat = Utils::extractStrings($xml, Constants::NS_MD, 'NameIDFormat');
+
+        return new self($AuthnQueryService, $AssertionIDRequestService, $NameIDFormat);
+    }
+
+
+    /**
      * Add this IDPSSODescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this AuthnAuthorityDescriptor to.

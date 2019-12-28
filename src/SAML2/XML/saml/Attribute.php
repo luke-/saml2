@@ -7,6 +7,7 @@ namespace SAML2\XML\saml;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class Attribute
+class Attribute extends AbstractConvertable
 {
     /**
      * The Name of this attribute.
@@ -183,6 +184,31 @@ class Attribute
     public function addAttributeValue(AttributeValue $attributeValue): void
     {
         $this->AttributeValue[] = $attributeValue;
+    }
+
+
+    /**
+     * Convert XML into a Attribute
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('Name')) {
+            throw new \Exception('Missing Name on Attribute.');
+        }
+        $Name = $xml->getAttribute('Name');
+
+        $NameFormat = $xml->hasAttribute('NameFormat') ? $xml->getAttribute('NameFormat') : null;
+        $FriendlyName = $xml->hasAttribute('FriendlyName') ? $xml->getAttribute('FriendlyName') : null;
+
+        $values = [];
+        foreach (Utils::xpQuery($xml, './saml_assertion:AttributeValue') as $av) {
+            $values[] = new AttributeValue($av);
+        }
+
+        return new self($Name, $NameFormat, $FriendlyName, $values);
     }
 
 

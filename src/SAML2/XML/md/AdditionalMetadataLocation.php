@@ -7,6 +7,7 @@ namespace SAML2\XML\md;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class AdditionalMetadataLocation
+class AdditionalMetadataLocation extends AbstractConvertable
 {
     /**
      * The namespace of this metadata.
@@ -103,6 +104,22 @@ class AdditionalMetadataLocation
     public function setLocation(string $location): void
     {
         $this->location = $location;
+    }
+
+
+    /**
+     * Convert XML into a AdditionalMetadataLocation
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('namespace')) {
+            throw new \Exception('Missing namespace attribute on AdditionalMetadataLocation element.');
+        }
+
+        return new self($xml->getAttribute('namespace'), $xml->textContent);
     }
 
 

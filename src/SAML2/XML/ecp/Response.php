@@ -7,12 +7,13 @@ namespace SAML2\XML\ecp;
 use DOMElement;
 use InvalidArgumentException;
 use SAML2\Constants;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
  * Class representing the ECP Response element.
  */
-class Response
+class Response extends AbstractConvertable
 {
     /**
      * The AssertionConsumerServiceURL.
@@ -83,6 +84,39 @@ class Response
             throw new InvalidArgumentException('AssertionConsumerServiceURL is not a valid URL.');
         }
         $this->AssertionConsumerServiceURL = $assertionConsumerServiceURL;
+    }
+
+
+    /**
+     * Convert XML into a Response
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttributeNS(Constants::NS_SOAP, 'mustUnderstand')) {
+            throw new \Exception('Missing SOAP-ENV:mustUnderstand attribute in <ecp:Response>.');
+        }
+        $mustUnderstand = $xml->getAttributeNS(Constants::NS_SOAP, 'mustUnderstand');
+
+        if (!$xml->hasAttributeNS(Constants::NS_SOAP, 'actor')) {
+            throw new \Exception('Missing SOAP-ENV:actor attribute in <ecp:Response>.');
+        }
+        $actor = $xml->getAttributeNS(Constants::NS_SOAP, 'actor');
+
+        Assert::same($mustUnderstand, '1', 'Invalid value of SOAP-ENV:mustUnderstand attribute in <ecp:Response>.');
+        Assert::same(
+            $actor,
+            'http://schemas.xmlsoap.org/soap/actor/next',
+            'Invalid value of SOAP-ENV:actor attribute in <ecp:Response>.'
+        );
+
+        if (!$xml->hasAttribute('AssertionConsumerServiceURL')) {
+            throw new \Exception('Missing AssertionConsumerServiceURL attribute in <ecp:Response>.');
+        }
+
+        return new self($xml->getAttribute('AssertionConsumerServiceURL'));
     }
 
 

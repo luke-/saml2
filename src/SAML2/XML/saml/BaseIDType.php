@@ -7,6 +7,7 @@ namespace SAML2\XML\saml;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\DOMDocumentFactory;
+use SAML2\XML\AbstractConvertable;
 
 /**
  * Base class corresponding to the BaseID element.
@@ -15,7 +16,7 @@ use SAML2\DOMDocumentFactory;
  * @package simplesamlphp/saml2
  */
 
-abstract class BaseIDType
+abstract class BaseIDType extends AbstractConvertable
 {
     /**
      * The security or administrative domain that qualifies the identifier.

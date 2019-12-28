@@ -7,6 +7,7 @@ namespace SAML2\XML\md;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use SAML2\XML\Chunk;
 use Webmozart\Assert\Assert;
 
@@ -15,7 +16,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class Organization
+class Organization extends AbstractConvertable
 {
     /**
      * Extensions on this element.
@@ -183,6 +184,39 @@ class Organization
     public function setOrganizationURL(array $organizationURL): void
     {
         $this->OrganizationURL = $organizationURL;
+    }
+
+
+    /**
+     * Convert XML into a Organization
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $Extensions = Extensions::getList($xml);
+
+        $OrganizationName = Utils::extractLocalizedStrings($xml, Constants::NS_MD, 'OrganizationName');
+        if (empty($OrganizationName)) {
+            $OrganizationName = ['invalid' => ''];
+        }
+
+        $OrganizationDisplayName = Utils::extractLocalizedStrings(
+            $xml,
+            Constants::NS_MD,
+            'OrganizationDisplayName'
+        );
+        if (empty($OrganizationDisplayName)) {
+            $OrganizationDisplayName = ['invalid' => ''];
+        }
+
+        $OrganizationURL = Utils::extractLocalizedStrings($xml, Constants::NS_MD, 'OrganizationURL');
+        if (empty($OrganizationURL)) {
+            $OrganizationURL = ['invalid' => ''];
+        }
+
+        return new self($OrganizationName, $OrganizationDisplayName, $OrganizationURL);
     }
 
 

@@ -6,6 +6,7 @@ namespace SAML2\XML\ds;
 
 use DOMElement;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
+use SAML2\XML\AbstractConvertable;
 use SAML2\XML\Chunk;
 use SAML2\XML\ds\X509Certificate;
 use Webmozart\Assert\Assert;
@@ -15,7 +16,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class X509Data
+class X509Data extends AbstractConvertable
 {
     /**
      * The various X509 data elements.
@@ -96,6 +97,39 @@ class X509Data
         Assert::isInstanceOfAny($data, [Chunk::class, X509Certificate::class]);
 
         $this->data[] = $data;
+    }
+
+
+    /**
+     * Convert XML into a X509Data
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $data = []
+
+        for ($n = $xml->firstChild; $n !== null; $n = $n->nextSibling) {
+            if (!($n instanceof DOMElement)) {
+                continue;
+            }
+
+            if ($n->namespaceURI !== XMLSecurityDSig::XMLDSIGNS) {
+                $data[] = new Chunk($n);
+                continue;
+            }
+            switch ($n->localName) {
+                case 'X509Certificate':
+                    $data[] = new X509Certificate($n);
+                    break;
+                default:
+                    $data[] = new Chunk($n);
+                    break;
+            }
+        }
+
+        return new self($data);
     }
 
 

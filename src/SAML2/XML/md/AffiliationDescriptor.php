@@ -8,6 +8,7 @@ use DOMElement;
 use SAML2\Constants;
 use SAML2\SignedElementHelper;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -244,6 +245,52 @@ class AffiliationDescriptor extends SignedElementHelper
     public function addKeyDescriptor(KeyDescriptor $keyDescriptor): void
     {
         $this->KeyDescriptor[] = $keyDescriptor;
+    }
+
+
+    /**
+     * Convert XML into a AffiliationDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('affiliationOwnerID')) {
+            throw new \Exception('Missing affiliationOwnerID on AffiliationDescriptor.');
+        }
+        $AffiliationOwnerID = $xml->getAttribute('affiliationOwnerID');
+
+        $ID = $xml->hasAttribute('ID') ? $xml->getAttribute('ID') : null;
+
+        $validUntil = $xml->hasAttribute('validUntil')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('validUntil'))
+            : null;
+
+        $cacheDuration = $xml->hasAttribute('cacheDuration') ? $xml->getAttribute('cacheDuration') : null;
+
+        $Extensions = Extensions::getList($xml);
+
+        $AffiliateMember = Utils::extractStrings($xml, Constants::NS_MD, 'AffiliateMember');
+        if (empty($AffiliateMember)) {
+            throw new \Exception('Missing AffiliateMember in AffiliationDescriptor.');
+        }
+
+        $KeyDescriptors = [];
+        /** @var \DOMElement $kd */
+        foreach (Utils::xpQuery($xml, './saml_metadata:KeyDescriptor') as $kd) {
+            $KeyDescriptors[] = new KeyDescriptor($kd);
+        }
+
+        return new self(
+            $AffiliationOwnerID,
+            $ID,
+            $validUntil,
+            $cacheDuration,
+            $Extensions,
+            $AffiliateMember,
+            $KeyDescriptors
+        );
     }
 
 

@@ -92,6 +92,30 @@ class Issuer extends NameIDType
 
 
     /**
+     * Convert XML into a Issuer
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $Format = $xml->hasAttribute('Format') ? $xml->getAttribute('Format') : Constants::NAMEID_ENTITY;
+        $SPProvidedID = $xml->hasAttribute('SPProvidedID') ? $xml->getAttribute('SPProvidedID') : null;
+        $value = $xml->textContent;
+
+        $NameQualifier = $xml->hasAttribute('NameQualifier')
+            ? $xml->getAttribute('NameQualifier')
+            : null;
+
+        $SPNameQualifier = $xml->hasAttribute('SPNameQualifier')
+            ? $xml->getAttribute('SPNameQualifier')
+            : null;
+
+        return new self($Format, $SPProvidedID, $NameQualifier, $SPNameQualifier, $value);
+    }
+
+
+    /**
      * Convert this Issuer to XML.
      *
      * @param \DOMElement|null $parent The element we should append to.

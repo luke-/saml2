@@ -6,6 +6,7 @@ namespace SAML2\XML\shibmd;
 
 use DOMElement;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  * @link https://wiki.shibboleth.net/confluence/display/SHIB/ShibbolethMetadataProfile
  * @package SimpleSAMLphp
  */
-class Scope
+class Scope extends AbstractConvertable
 {
     /**
      * The namespace used for the Scope extension element.
@@ -99,6 +100,21 @@ class Scope
     public function setIsRegexpScope(bool $regexp): void
     {
         $this->regexp = $regexp;
+    }
+
+
+    /**
+     * Convert XML into a NameIDPolicy
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $scope = $xml->textContent;
+        $regexp = Utils::parseBoolean($xml, 'regexp', false);
+
+        return new self($scope, $regexp);
     }
 
 

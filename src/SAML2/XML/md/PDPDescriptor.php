@@ -169,6 +169,35 @@ class PDPDescriptor extends RoleDescriptor
 
 
     /**
+     * Convert XML into a PDPDescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $AuthzService = $AssertionIDRequestService = [];
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AuthzService') as $ep) {
+            $AuthzService[] = new EndpointType($ep);
+        }
+        if (empty($AuthzService)) {
+            throw new \Exception('Must have at least one AuthzService in PDPDescriptor.');
+        }
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AssertionIDRequestService') as $ep) {
+            $AssertionIDRequestService[] = new EndpointType($ep);
+        }
+
+        $NameIDFormat = Utils::extractStrings($xml, Constants::NS_MD, 'NameIDFormat');
+
+        return new self($AuthzService, $AssertionIDRequestService, $NameIDFormat);
+    }
+
+
+    /**
      * Add this PDPDescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this IDPSSODescriptor to.

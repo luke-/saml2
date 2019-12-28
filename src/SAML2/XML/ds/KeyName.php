@@ -6,6 +6,7 @@ namespace SAML2\XML\ds;
 
 use DOMElement;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
+use SAML2\XML\AbstractConvertable;
 use SAML2\Utils;
 use Webmozart\Assert\Assert;
 
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class KeyName
+class KeyName extends AbstractConvertable
 {
     /**
      * The key name.
@@ -61,6 +62,18 @@ class KeyName
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+
+    /**
+     * Convert XML into a KeyName
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        return new self($xml->textContent);
     }
 
 

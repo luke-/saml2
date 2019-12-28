@@ -7,6 +7,7 @@ namespace SAML2\XML\ds;
 use DOMElement;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class X509Certificate
+class X509Certificate extends AbstractConvertable
 {
     /**
      * The base64-encoded certificate.
@@ -63,6 +64,18 @@ class X509Certificate
     public function setCertificate(string $certificate): void
     {
         $this->certificate = $certificate;
+    }
+
+
+    /**
+     * Convert XML into a X509Certificate
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        return new self($xml->textContent);
     }
 
 

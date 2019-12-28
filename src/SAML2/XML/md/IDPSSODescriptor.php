@@ -294,6 +294,50 @@ class IDPSSODescriptor extends SSODescriptorType
 
 
     /**
+     * Convert XML into a IDPSSODescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $SingleSignOnService = $NameIDMappingService = $AssertionIDRequestService = $Attribute = [];
+        $WantAuthnRequestsSigned = Utils::parseBoolean($xml, 'WantAuthnRequestsSigned', null);
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:SingleSignOnService') as $ep) {
+            $SingleSignOnService[] = new EndpointType($ep);
+        }
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:NameIDMappingService') as $ep) {
+            $NameIDMappingService[] = new EndpointType($ep);
+        }
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AssertionIDRequestService') as $ep) {
+            $AssertionIDRequestService[] = new EndpointType($ep);
+        }
+
+        $AttributeProfile = Utils::extractStrings($xml, Constants::NS_MD, 'AttributeProfile');
+
+        /** @var \DOMElement $a */
+        foreach (Utils::xpQuery($xml, './saml_assertion:Attribute') as $a) {
+            $Attribute[] = new Attribute($a);
+        }
+
+        return new self(
+            $WantAuthnRequestsSigned,
+            $SingleSignOnService,
+            $NameIDMappingService,
+            $AssertionIDRequestService,
+            $AttributeProfile,
+            $Attribute
+        );
+    }
+
+
+    /**
      * Add this IDPSSODescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this IDPSSODescriptor to.

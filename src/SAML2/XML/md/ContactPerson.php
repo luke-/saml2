@@ -8,6 +8,7 @@ use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
 use SAML2\XML\Chunk;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -15,7 +16,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class ContactPerson
+class ContactPerson extends AbstractConvertable
 {
     /**
      * The contact type.
@@ -387,6 +388,49 @@ class ContactPerson
     public function addContactPersonAttributes(string $attr, string $value): void
     {
         $this->ContactPersonAttributes[$attr] = $value;
+    }
+
+
+    /**
+     * Convert XML into a ContactPerson
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('contactType')) {
+            throw new \Exception('Missing contactType on ContactPerson.');
+        }
+        $ContactType = $xml->getAttribute('contactType');
+
+        $Extensions = Extensions::getList($xml);
+
+        $Company = self::getStringElement($xml, 'Company');
+        $GivenName = self::getStringElement($xml, 'GivenName');
+        $SurName = self::getStringElement($xml, 'SurName');
+        $EmailAddress = self::getStringElements($xml, 'EmailAddress');
+        $TelephoneNumber = self::getStringElements($xml, 'TelephoneNumber');
+
+        $ContactPersonAttributes = [];
+        foreach ($xml->attributes as $attr) {
+            if ($attr->nodeName === "contactType") {
+                continue;
+            }
+
+            $ContactPersonAttributes[$attr->nodeName] = $attr->nodeValue;
+        }
+
+        return new self(
+            $ContactType,
+            $Extensions,
+            $Company,
+            $GivenName,
+            $SurName,
+            $EmailAddress,
+            $TelephoneNumber,
+            $ContactPersonAttributes
+        );
     }
 
 

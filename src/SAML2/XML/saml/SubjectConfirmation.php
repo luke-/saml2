@@ -7,6 +7,7 @@ namespace SAML2\XML\saml;
 use DOMElement;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use Webmozart\Assert\Assert;
 
 /**
@@ -14,7 +15,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class SubjectConfirmation
+class SubjectConfirmation extends AbstractConvertable
 {
     /**
      * The method we can use to verify this Subject.
@@ -143,6 +144,40 @@ class SubjectConfirmation
     public function setSubjectConfirmationData(SubjectConfirmationData $subjectConfirmationData = null): void
     {
         $this->SubjectConfirmationData = $subjectConfirmationData;
+    }
+
+
+    /**
+     * Convert XML into a NameIDPolicy
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('Method')) {
+            throw new \Exception('SubjectConfirmation element without Method attribute.');
+        }
+        $Method = $xml->getAttribute('Method');
+        $NameID = $SubjectConfirmationData = null;
+
+        /** @var \DOMElement[] $nid */
+        $nid = Utils::xpQuery($xml, './saml_assertion:NameID');
+        if (count($nid) > 1) {
+            throw new \Exception('More than one NameID in a SubjectConfirmation element.');
+        } elseif (!empty($nid)) {
+            $NameID = new NameID($nid[0]);
+        }
+
+        /** @var \DOMElement[] $scd */
+        $scd = Utils::xpQuery($xml, './saml_assertion:SubjectConfirmationData');
+        if (count($scd) > 1) {
+            throw new \Exception('More than one SubjectConfirmationData child in a SubjectConfirmation element.');
+        } elseif (!empty($scd)) {
+            $SubjectConfirmationData = new SubjectConfirmationData($scd[0]);
+        }
+
+        return new self($Method, $NameID, $SubjectConfirmationData);
     }
 
 

@@ -192,6 +192,32 @@ class SPSSODescriptor extends SSODescriptorType
 
 
     /**
+     * Convert XML into a SPSSODescriptor
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $AuthnRequestsSigned = Utils::parseBoolean($xml, 'AuthnRequestsSigned', null);
+        $WantAssertionsSigned = Utils::parseBoolean($xml, 'WantAssertionsSigned', null);
+        $AssertionConsumerService = $AttributeConsumingService = [];
+
+        /** @var \DOMElement $ep */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AssertionConsumerService') as $ep) {
+            $AssertionConsumerService[] = new IndexedEndpointType($ep);
+        }
+
+        /** @var \DOMElement $acs */
+        foreach (Utils::xpQuery($xml, './saml_metadata:AttributeConsumingService') as $acs) {
+            $AttributeConsumingService[] = new AttributeConsumingService($acs);
+        }
+
+        return new self($AuthnRequestsSigned, $WantAssertionsSigned, $AssertionConsumerService, $AttributeConsumingService);
+    }
+
+
+    /**
      * Add this SPSSODescriptor to an EntityDescriptor.
      *
      * @param \DOMElement $parent The EntityDescriptor we should append this SPSSODescriptor to.

@@ -8,6 +8,7 @@ use DOMElement;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use SAML2\Constants;
 use SAML2\Utils;
+use SAML2\XML\AbstractConvertable;
 use SAML2\XML\Chunk;
 use SAML2\XML\ds\KeyInfo;
 use Webmozart\Assert\Assert;
@@ -17,7 +18,7 @@ use Webmozart\Assert\Assert;
  *
  * @package SimpleSAMLphp
  */
-class SubjectConfirmationData
+class SubjectConfirmationData extends AbstractConvertable
 {
     /**
      * The time before this element is valid, as an unix timestamp.
@@ -266,6 +267,47 @@ class SubjectConfirmationData
     {
         Assert::isInstanceOfAny($info, [Chunk::class, KeyInfo::class]);
         $this->info[] = $info;
+    }
+
+
+    /**
+     * Convert XML into a SubjectConfirmationData
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        $NotBefore = $xml->hasAttribute('NotBefore')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('NotBefore'))
+            :null;
+        $NotOnOrAfter = $xml->hasAttribute('NotOnOrAfter')
+            ? Utils::xsDateTimeToTimestamp($xml->getAttribute('NotOnOrAfter'))
+            :null;
+        $Recipient = $xml->hasAttribute('Recipient') ? $xml->getAttribute('Recipient') : null;
+        $InResponseTo = $xml->hasAttribute('InResponseTo') ? $xml->getAttribute('InResponseTo') : null;
+        $Address = $xml->hasAttribute('Address') ? $xml->getAttribute('Address') : null;
+
+        $Info = [];
+        foreach ($xml->childNodes as $n) {
+            if (!($n instanceof DOMElement)) {
+                continue;
+            }
+            if ($n->namespaceURI !== XMLSecurityDSig::XMLDSIGNS) {
+                $Info = new Chunk($n);
+                continue;
+            }
+            switch ($n->localName) {
+                case 'KeyInfo':
+                    $Info = new KeyInfo($n);
+                    break;
+                default:
+                    $Info = new Chunk($n);
+                    break;
+            }
+        }
+
+        return new self($NotBefore, $NotOnOrAfter, $Recipient, $InResponseTo, $Address, $Info);
     }
 
 

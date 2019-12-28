@@ -65,6 +65,18 @@ class RequestedAttribute extends Attribute
 
 
     /**
+     * Convert XML into a RequestedAttribute
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        return new self(Utils::parseBoolean($xml, 'isRequired', null));
+    }
+
+
+    /**
      * Convert this RequestedAttribute to XML.
      *
      * @param \DOMElement $parent The element we should append this RequestedAttribute to.

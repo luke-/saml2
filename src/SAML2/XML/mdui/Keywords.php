@@ -13,7 +13,7 @@ use Webmozart\Assert\Assert;
  * @link: http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-metadata-ui/v1.0/sstc-saml-metadata-ui-v1.0.pdf
  * @package SimpleSAMLphp
  */
-class Keywords
+class Keywords extends \SAML2\XML\AbstractConvertable
 {
     /**
      * The keywords of this item.
@@ -116,6 +116,33 @@ class Keywords
     public function addKeyword(string $keyword): void
     {
         $this->Keywords[] = $keyword;
+    }
+
+
+    /**
+     * Convert XML into a Keywords
+     *
+     * @param \DOMElement $xml The XML element we should load
+     * @return self
+     */
+    public static function fromXML(DOMElement $xml): object
+    {
+        if (!$xml->hasAttribute('xml:lang')) {
+            throw new \Exception('Missing lang on Keywords.');
+        }
+        $lang = $xml->getAttribute('xml:lang');
+
+
+        if (!strlen($xml->textContent)) {
+            throw new \Exception('Missing value for Keywords.');
+        }
+
+        $Keywords = [];
+        foreach (explode(' ', $xml->textContent) as $keyword) {
+            $Keywords[] = str_replace('+', ' ', $keyword);
+        }
+
+        return new self($lang, $Keywords);
     }
 
 
